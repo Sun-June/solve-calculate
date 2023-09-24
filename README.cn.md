@@ -1,22 +1,16 @@
 # solve-calculate
 
-#### [中文](./README.cn.md)
+solve-calculate 是一个简单的公式解析及运算工具，主要面向于node code或需要用户自定义公式等业务场景。
 
-#### [日本語](./README.jp.md)
+> 本项目的公式解析及定义部分借鉴[javaluator](https://javaluator.sourceforge.net/en/home/) 的实现方式
 
-solve-calculate is a simple formula parsing and calculation tool, mainly aimed at node code or business scenarios that
-require custom formulas.
+> 你也可以看下关于[未来的计划](#未来计划)
 
-> The formula parsing and definition part of this project is inspired by the implementation
-> of [javaluator](https://javaluator.sourceforge.net/en/home/).
+## 如何使用
 
-> You can also take a look at the [future plans](#future-plans).
+* maven引用
 
-## How to Use
-
-* Maven Dependency
-
-> Currently under development, cannot be directly referenced yet
+> 目前发布推进中，当前还无法直接引用使用
 
 ```xml
 
@@ -27,12 +21,11 @@ require custom formulas.
 </dependency>
 ```
 
-* Simple Example：
+* 简单的例子：
 
-> NumberCalculator is a numeric calculator, and objects involved in the operation must be numeric. It also provides a
-> mixed calculator implementation, which can perform conditional and string calculations, as explained later.
+> NumberCalculator为数值计算器，参与运算的对象都必须为数值。还提供混合计算实现MixedCalculator，可以进行判断式和字符串等计算，可看后续说明。
 >
-> assertEquals is an assertion method used to verify that the results on both sides are the same.
+> assertEquals为断言方法，用于判断两边的结果相同
 
 ```java
 public class NumberCalculatorTest {
@@ -54,11 +47,11 @@ public class NumberCalculatorTest {
 }        
 ```
 
-### Features
+### 特性
 
-#### Independent Formula Validation
+#### 独立的公式检查
 
-Example：
+例子：
 
 ```java
 public class NumberCalculatorTest {
@@ -75,16 +68,15 @@ public class NumberCalculatorTest {
 }
 ```
 
-* Use the `checkFormula` method to check if the formula is correct.
-* In case of an error, a `FormulaException` is thrown.
-* `error` represents the error code of the exception, and each code corresponds to an enum that you can use for
-  internationalized error messages.
-* `startIndex` and `endIndex` indicate the starting and ending positions of the error in the formula.
-* With this information, you can better provide error messages and check the correctness of the formula.
+* 使用checkFormula方法进行公式是否正确的检查
+* 错误的情况下会抛出FormulaException异常
+* 其中error为异常的code信息，各个code对应一个枚举，你可以通过这个做错误信息的国际化
+* startIndex和endIndex为这个错误对应公式中字符的起始和截止位置
+* 通过以上信息，你可以更好的提示和检查公式的正确性
 
-#### Retrieval of Calculation History
+#### 可获取计算过程记录
 
-Example：
+例子：
 
 ```java
 public class NumberCalculatorTest {
@@ -105,7 +97,7 @@ public class NumberCalculatorTest {
 }
 ```
 
-Output：
+输出结果：
 
 ```shell
 record::{"arithmetic":"-","index":0,"values":[1.0],"result":-1,"kind":"MONADIC_OPERATOR"}
@@ -124,18 +116,18 @@ record::{"arithmetic":"sum","index":23,"values":[1.0,2.0,10,5.0],"result":18,"ki
 record::{"arithmetic":"+","index":21,"values":[9,18],"result":27,"kind":"OPERATOR"}
 ```
 
-- You can use the `calculationBoth` method to get an object that includes the calculation result and the context.
-- The `context` contains the entire calculation history in the `recordList` field.
-    - The order of calculation records corresponds to the actual calculation order.
-    - `arithmetic` represents the original string used for the calculation.
-    - `index` indicates the position in the formula.
-    - `values` stores the values involved in the calculation (in the order they were passed for the operation).
-    - `result` represents the result of this calculation.
-    - `kind` represents the type of calculation.
+* 通过calculationBoth方法可以获取包含计算结果和上下文context的对象
+* context中recordList则存储了整个计算记录
+    * 计算记录的顺序为实际计算顺序
+    * arithmetic为进行计算的原字符串
+    * index为对应在公式中的位置
+    * values为参与计算的值（顺序即为运算传入的顺序）
+    * result为此次运算的结果
+    * kind为计算类型
 
-#### Simple Variable Substitution
+#### 简单的变量替换
 
-Example：
+例子：
 
 ```java
 public class NumberContext extends Context<Number> {
@@ -160,25 +152,23 @@ public class NumberContext extends Context<Number> {
 }
 ```
 
-- The provided example defines a context for numeric operations (you can extend `NumberContext` to customize the context
-  you need).
-- It includes handling the conversion of `π` to a numeric value.
-- By following this approach, you can define which variables can be substituted into the formula for calculations.
+* 以上为目前数值运算的context定义（你可以通过继承NumberContext来重写需要返回的context）
+* 其中有处理将`π`进行数值化转换的操作
+* 借鉴此思路你可以定义哪些变量可进行代入公式进行计算
 
-#### Simple Function and Operator Extensions
+#### 简易的函数和运算符扩展
 
-- You can also add or adjust supported calculation functions and operators.
-    - Override the corresponding retrieval methods in `NumberCalculator` or `MixedCalculator` to adjust what is involved
-      in the calculation.
-    - Alternatively, you can directly extend `Calculator` to design your own calculator utility class.
-- For extending calculation functions, refer to the implementations in the `info.sunjune.solve.calculation.function`
-  package, such as `info.sunjune.solve.calculation.function.NumberFunction`.
-- For extending operators, refer to the implementations in the `info.sunjune.solve.calculation.operator` package, such
-  as `info.sunjune.solve.calculation.operator.AdditionNumberOperator`.
+* 你也可以增加或调整支持的计算函数和运算符
+    * 通过继承NumberCalculator或MixedCalculator重写对应的获取方法来调整参与计算的内容
+    * 或者直接继承Calculator来设计自己的计算器工具类
+* 计算函数的扩展请参考`info.sunjune.solve.calculation.function`包下的实现
+    * 比如`info.sunjune.solve.calculation.function.NumberFunction`
+* 运算符的扩展请参考`info.sunjune.solve.calculation.operator`包下的实现
+    * 比如`info.sunjune.solve.calculation.operator.AdditionNumberOperator`
 
-#### Mixed Calculator
+#### 混合计算器
 
-Example：
+例子：
 
 ```java
 public class MixedCalculatorTest {
@@ -197,30 +187,31 @@ public class MixedCalculatorTest {
 }
 ```
 
-- In the mixed calculator implementation, `+` can be used for string operations (other non-numeric objects are also
-  converted to strings for calculations).
-- It supports comparison operators (`> >= < <= == !=`) and logical operators (`&& ||`).
+* 混合计算器的实现中，`+`可进行字符串运算（其他非数值对象也会转换为字符串进行运算）
+* 支持比对运算符（`> >= < <= == !=`）和关系运算符(`&& ||`)
 
-## Future Plans
+<a name="my-future"></a>
 
-- 0.8.0
-    - Enhance code comments
-    - Add support for common calculation functions
-    - Publish to the Maven Central Repository
-- 0.9.0
-    - Add support for chained calculations, as follows:
-        - ProjectA, calculation formula: `num + 100`, where `num` is a custom variable
-        - ProjectB, calculation formula: `ProjectA - 9`
-        - ProjectC, calculation formula: `ProjectA + ProjectB`
-    - Add checks for chained calculations to prevent cycles
-    - Add features for recording chained calculations and more
-- 1.0.0
-    - Continue to enhance chained calculations
-    - Add support for table-like data in chained calculations, including:
-        - Calculations for each row of multi-row data, allowing the introduction of variables from outside the data
-        - Limited support for accessing data outside the multi-row data
-- Post 1.0.0
-    - Routine maintenance
-    - Introduce a TypeScript version, allowing Node.js or front-end applications to achieve the same functionality
-    - Release Java 21 version (as a separate project), which may utilize features like virtual threads to accelerate
-      computation
+## 未来计划
+
+* 0.8.0
+    * 丰富代码注释
+    * 增加常用计算函数支持
+    * 发布到maven中央仓库
+* 0.9.0
+    * 增加链式计算支持，举例如下
+        * 项目a，计算公式为`num + 100`，其中num为一个自定义变量
+        * 项目b，计算公式为`项目a - 9`
+        * 项目c，计算公式为`项目a + 项目b`
+    * 追加链式计算的检测，防止成为环
+    * 追加链式计算记录等功能
+* 1.0.0
+    * 继续增强链式计算
+    * 追加链式计算中类似table这类多行数据的计算类型支持
+        * 支持多行数据中每一行进行计算，其中也能引入多行数据之外的量来计算
+        * 有限支持多行数据外的数据访问
+* 1.0.0以后
+    * 日常问题维护
+    * 推出typescript版本，可以让nodejs或者前端完成同样的功能
+    * 推出java21版本（另外新建项目），可能会利用虚拟线程等特性加快运算速度
+

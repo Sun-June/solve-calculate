@@ -2,9 +2,9 @@ package info.sunjune.solve.calculation.calculator;
 
 import com.google.gson.Gson;
 import info.sunjune.solve.calculation.calculator.context.CalculationRecord;
+import info.sunjune.solve.calculation.calculator.item.Kind;
 import info.sunjune.solve.calculation.define.Context;
 import info.sunjune.solve.calculation.error.ErrorInfo;
-import info.sunjune.solve.calculation.error.FormulaError;
 import info.sunjune.solve.calculation.error.FormulaException;
 import info.sunjune.solve.calculation.util.BothValue;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,10 @@ public class NumberCalculatorTest {
         assertEquals(calculator.calculation("-1 + -100 + 11 * 10 / 2 + 5 / 2"), -43.5d);
         assertEquals(calculator.calculation("1 + round(3.15 * 2.45, 2, \"ROUND_UP\")"), 8.72d);
         assertEquals(calculator.calculation("1 + round(3.15 * 2.45, 2, \"ROUND_DOWN\")"), 8.71d);
-
         assertEquals(calculator.calculation("1 + 2 ^ 3 / 2 + 1"), 6);
         assertEquals(calculator.calculation("2 + 5 % 2000‰ + 1"), 4);
+        assertEquals(calculator.calculation("2 + 5 % 2000‰ + 1"), 4);
+        assertEquals(calculator.calculation("2 + round( 2 * π * 7, 0) + 1"), 47);
 
     }
 
@@ -41,7 +42,9 @@ public class NumberCalculatorTest {
         assertEquals(bothValue.getLeft(), 27);
         Gson gson = new Gson();
         for (CalculationRecord record : bothValue.getRight().recordList) {
-            System.out.println("record::" + gson.toJson(record));
+            if (record.kind != Kind.LITERAL) {
+                System.out.println("record::" + gson.toJson(record));
+            }
         }
     }
 
@@ -52,7 +55,7 @@ public class NumberCalculatorTest {
 
         String input = "π + sum(10, min(, 10)) - 10";
 
-        FormulaException ex = assertThrows(FormulaException.class, () -> calculator.calculation(input));
+        FormulaException ex = assertThrows(FormulaException.class, () -> calculator.checkFormula(input));
         assertEquals(ARGUMENT_MISSING, ex.error);
         assertEquals(",", input.substring(ex.startIndex, ex.endIndex));
 
@@ -94,7 +97,7 @@ public class NumberCalculatorTest {
 
     void formulaError(String formula, String errorStr, ErrorInfo error) {
         NumberCalculator calculator = new NumberCalculator();
-        FormulaException ex = assertThrows(FormulaException.class, () -> calculator.calculation(formula));
+        FormulaException ex = assertThrows(FormulaException.class, () -> calculator.checkFormula(formula));
         assertEquals(error, ex.error);
         assertEquals(errorStr, formula.substring(ex.startIndex, ex.endIndex));
     }

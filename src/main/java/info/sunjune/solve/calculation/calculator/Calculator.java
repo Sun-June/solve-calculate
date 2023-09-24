@@ -472,7 +472,7 @@ public abstract class Calculator<T> {
                 leftItem = left(calculatorContext, item);
                 LiteralSolveItem<T> literalSolveItem = (LiteralSolveItem<T>) item;
                 T literalValue = literalSolveItem.getValue();
-                context.addRecord(item, Lists.newArrayList(literalValue));
+                context.addRecord(item, Lists.newArrayList(literalValue), literalValue);
                 if (next != null && calculatorContext.isMonadicOperatorLeft(next)) {
                     calculatorContext.leftValue = literalValue;
                     return leftToRight(calculatorContext, next);
@@ -488,8 +488,8 @@ public abstract class Calculator<T> {
                 rightOperator = this.rightOperator(calculatorContext, item);
                 if (monadicOperator.right()) {
                     T rightValue = leftToRight(calculatorContext, right(calculatorContext, item));
-                    context.addRecord(item, Lists.newArrayList(rightValue));
                     T resultValue = monadicOperator.calculation(rightValue, context);
+                    context.addRecord(item, Lists.newArrayList(rightValue), resultValue);
                     leftItem = left(calculatorContext, item);
                     if ((leftItem == null || leftItem.kind == Kind.FUNCTION_SEPARATOR || leftItem.kind == Kind.OPEN_BRACKET) && rightOperator != null) {
                         calculatorContext.leftValue = resultValue;
@@ -498,8 +498,8 @@ public abstract class Calculator<T> {
                         return resultValue;
                     }
                 } else {
-                    context.addRecord(item, Lists.newArrayList(calculatorContext.leftValue));
                     T resultValue = monadicOperator.calculation(calculatorContext.leftValue, context);
+                    context.addRecord(item, Lists.newArrayList(calculatorContext.leftValue), resultValue);
                     SolveItem leftOperator = this.leftOperator(calculatorContext, item);
                     if (rightOperator != null && leftOperator == null) {
                         calculatorContext.leftValue = resultValue;
@@ -521,13 +521,13 @@ public abstract class Calculator<T> {
                         calculatorContext.stacks.computeIfAbsent(operator.precedence(), key ->
                                 obj -> {
                                     T stackValue = operator.calculation(leftValue, obj, context);
-                                    context.addRecord(item, Lists.newArrayList(leftValue, obj));
+                                    context.addRecord(item, Lists.newArrayList(leftValue, obj), stackValue);
                                     return stackValue;
                                 });
                         return this.leftToRight(calculatorContext, rightOperator);
                     } else {
                         T stepValue = operator.calculation(leftValue, rightValue, context);
-                        context.addRecord(item, Lists.newArrayList(leftValue, rightValue));
+                        context.addRecord(item, Lists.newArrayList(leftValue, rightValue), stepValue);
                         if (calculatorContext.stacks.containsKey(rightOp.precedence())) {
                             stepValue = calculatorContext.stacks.get(rightOp.precedence()).apply(stepValue);
                             calculatorContext.stacks.remove(rightOp.precedence());
@@ -544,7 +544,7 @@ public abstract class Calculator<T> {
                     }
                 } else {
                     T stepValue = operator.calculation(leftValue, rightValue, context);
-                    context.addRecord(item, Lists.newArrayList(leftValue, rightValue));
+                    context.addRecord(item, Lists.newArrayList(leftValue, rightValue), stepValue);
                     if (!calculatorContext.stacks.isEmpty()) {
                         stepValue = calculatorContext.stacks.values().stream().findFirst().get().apply(stepValue);
                         calculatorContext.stacks.clear();
@@ -562,8 +562,8 @@ public abstract class Calculator<T> {
                     values.add(this.leftToRight(calculatorContext, nextItem));
                     indexItem = functionSolveItem.getSeparator(i);
                 }
-                context.addRecord(item, values);
                 T functionResult = function.calculation(values, context);
+                context.addRecord(item, values, functionResult);
                 SolveItem functionOpen = this.left(calculatorContext, item);
                 SolveItem leftOperation = this.leftOperator(calculatorContext, item);
                 SolveItem rightOperation = this.rightOperator(calculatorContext, functionOpen);

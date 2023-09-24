@@ -56,11 +56,14 @@ public class CalculationRecord {
      * 計算に参加する値、例えば 1 + 3 の場合、値は [1, 3] です。
      */
     public final List<Object> values;
- 
+
+    public final Object result;
+
     public final Kind kind;
 
-    public CalculationRecord(SolveItem item, List<Object> values) {
+    public CalculationRecord(SolveItem item, List<Object> values, Object result) {
         this.values = values;
+        this.result = result;
         this.index = item.startIndex;
         this.arithmetic = item.source;
         this.kind = item.kind;

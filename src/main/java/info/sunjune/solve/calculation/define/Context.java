@@ -56,8 +56,8 @@ public abstract class Context<T> {
         return null;
     }
 
-    public void addRecord(SolveItem item, List values) {
-        this.recordList.add(new CalculationRecord(item, values));
+    public void addRecord(SolveItem item, List values, Object result) {
+        this.recordList.add(new CalculationRecord(item, values, result));
     }
 
 }
