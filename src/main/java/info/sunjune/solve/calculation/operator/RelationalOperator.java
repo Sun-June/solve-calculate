@@ -20,15 +20,15 @@ import info.sunjune.solve.calculation.util.ValueUtil;
 public class RelationalOperator implements Operator<Boolean> {
 
     /**
-     * Logical AND Operator: &&
+     * Logical AND Operator
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * and关系运算符: &&
+     * and关系运算符
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 論理積演算子: &&
+     * 論理積演算子
      */
     public static final RelationalOperator AND = new RelationalOperator("&&");
 

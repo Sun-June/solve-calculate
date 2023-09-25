@@ -18,8 +18,6 @@ import java.util.Map;
  * ------------------------------------------------------------------
  * <br>
  * 計算式の実行中のコンテキストオブジェクト
- *
- * @param <T>
  */
 public abstract class Context<T> {
 

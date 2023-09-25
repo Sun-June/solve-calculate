@@ -19,7 +19,7 @@ import java.util.List;
  * <br>
  * 簡易なメソッド定義、デフォルトの括弧は（）です。
  *
- * @param <T>
+ * @param <T> type
  */
 public abstract class SimpleFunction<T> implements Function<T> {
 

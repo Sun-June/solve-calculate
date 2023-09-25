@@ -4,9 +4,32 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>solve-calculate</name>
+    <description>
+        solve-calculate is a simple formula parsing and calculation tool, mainly aimed at node code or business
+        scenarios that
+        require custom formulas.
+    </description>
+    <url>https://github.com/Sun-June/solve-calculate</url>
+
+    <licenses>
+        <license>
+            <name>MIT</name>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Sun June</name>
+            <email>xjwssjun@gmail.com</email>
+            <url>https://sun-june.info/</url>
+        </developer>
+    </developers>
+    <scm>
+        <url>https://github.com/Sun-June/solve-calculate</url>
+    </scm>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.2</version>
+    <version>0.8.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -72,24 +95,62 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.13</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <repositories>
         <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/Sun-June/solve-calculate</url>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
     <distributionManagement>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/Sun-June/solve-calculate</url>
-        </repository>
         <snapshotRepository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/Sun-June/solve-calculate</url>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
 </project>

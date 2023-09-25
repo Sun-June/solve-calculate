@@ -128,10 +128,10 @@ public abstract class Calculator<T> {
      * <br>
      * 式を使って計算し、結果を取得します。
      *
-     * @param formula
-     * @return
-     * @throws FormulaException
-     * @throws CalculationException
+     * @param formula formula
+     * @return the result
+     * @throws FormulaException     formula validation
+     * @throws CalculationException Exceptions occurring during calculations
      */
     public T calculation(String formula) throws FormulaException, CalculationException {
         BothValue<T, Context<T>> result = this.calculationBoth(formula);
@@ -149,10 +149,10 @@ public abstract class Calculator<T> {
      * <br>
      * 式を計算して結果とコンテキストを取得し、左側が結果で右側がコンテキストです（コンテキストを使用して実行履歴などを取得できます）。
      *
-     * @param formula
-     * @return
-     * @throws FormulaException
-     * @throws CalculationException
+     * @param formula formula
+     * @return the result and context
+     * @throws FormulaException     formula validation
+     * @throws CalculationException Exceptions occurring during calculations
      */
     public BothValue<T, Context<T>> calculationBoth(String formula) throws FormulaException, CalculationException {
         CalculatorContext<T> calculatorContext = this.checkFormula(formula);
@@ -180,9 +180,9 @@ public abstract class Calculator<T> {
      * <br>
      * 計算式を検証し、エラーがあれば例外をスローし、エラーがなければ正常に返し、対応するオブジェクトを計算用のコンテキストとして返します。
      *
-     * @param formula
-     * @return
-     * @throws FormulaException
+     * @param formula formula
+     * @return CalculatorContext
+     * @throws FormulaException formula validation
      */
     public CalculatorContext<T> checkFormula(String formula) throws FormulaException {
         CalculatorContext<T> calculatorContext = new CalculatorContext<T>(getInitContext(formula), this.expressionBracket());
@@ -305,7 +305,7 @@ public abstract class Calculator<T> {
      * <br>
      * サポートされているすべての関数定義を取得する。
      *
-     * @return
+     * @return functions
      */
     protected abstract List<Function<T>> getFunctions();
 
@@ -320,7 +320,7 @@ public abstract class Calculator<T> {
      * <br>
      * サポートされているすべての演算子を取得します。
      *
-     * @return
+     * @return operators
      */
     protected abstract List<Operator<T>> getOperators();
 
@@ -335,7 +335,7 @@ public abstract class Calculator<T> {
      * <br>
      * すべてのサポートされている単項演算子を取得します。
      *
-     * @return
+     * @return monadic operators
      */
     protected abstract List<MonadicOperator<T>> getMonadicOperators();
 
@@ -350,8 +350,8 @@ public abstract class Calculator<T> {
      * <br>
      * 初期化されたコンテキストを取得する。
      *
-     * @param formula
-     * @return
+     * @param formula formula
+     * @return Context
      */
     protected abstract Context<T> getInitContext(String formula);
 
@@ -366,7 +366,7 @@ public abstract class Calculator<T> {
      * <br>
      * 高優先度の括弧、デフォルトは（）です。
      *
-     * @return
+     * @return expressionBracket
      */
     protected BracketPair expressionBracket() {
         return BracketPair.PARENTHESES;
@@ -383,7 +383,7 @@ public abstract class Calculator<T> {
      * <br>
      * トップレベルの包括記号の定義を取得する。
      *
-     * @return
+     * @return TopBrackets
      */
     protected List<TopBracket<T>> topBrackets() {
         return Lists.newArrayList();
@@ -400,7 +400,7 @@ public abstract class Calculator<T> {
      * <br>
      * 関数内のパラメーターの区切り記号、デフォルトは「,」です。
      *
-     * @return
+     * @return functionSeparator
      */
     protected String functionSeparator() {
         return DEFAULT_FUNCTION_SEPARATOR;

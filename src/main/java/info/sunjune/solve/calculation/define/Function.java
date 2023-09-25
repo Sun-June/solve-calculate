@@ -24,7 +24,7 @@ public interface Function<T> extends Define, FunctionCalculation<T> {
      * <br>
      * 計算関数の名前
      *
-     * @return
+     * @return function name
      */
     String name();
 
@@ -39,7 +39,7 @@ public interface Function<T> extends Define, FunctionCalculation<T> {
      * <br>
      * パラメーターの最小値は、固定パラメーターを使用する場合、最大値と同じに設定します。
      *
-     * @return
+     * @return minimum value of parameters
      */
     int minArgumentCount();
 
@@ -54,7 +54,7 @@ public interface Function<T> extends Define, FunctionCalculation<T> {
      * <br>
      * パラメーターの最大値は、固定パラメーターを使用する場合、最小値と同じに設定することができます。
      *
-     * @return
+     * @return maximum value of parameters
      */
     int maxArgumentCount();
 
@@ -69,7 +69,7 @@ public interface Function<T> extends Define, FunctionCalculation<T> {
      * <br>
      * 関数定義の括弧を取得する、例えば（）。
      *
-     * @return
+     * @return function bracket pair
      */
     BracketPair getPair();
 

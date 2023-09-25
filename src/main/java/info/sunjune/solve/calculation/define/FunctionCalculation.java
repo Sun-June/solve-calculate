@@ -17,10 +17,10 @@ public interface FunctionCalculation<T> {
      * <br>
      * 渡されたパラメーターに基づいて計算し、計算結果を出力します。
      *
-     * @param values
-     * @param context
-     * @return
-     * @throws CalculationException
+     * @param values  values
+     * @param context context
+     * @return result
+     * @throws CalculationException Exceptions occurring during calculations
      */
     T calculation(List<Object> values, Context context) throws CalculationException;
 

@@ -10,8 +10,6 @@ package info.sunjune.solve.calculation.define;
  * ------------------------------------------------------------------
  * <br>
  * トップレベル演算子の定義、最上位演算子を定義し、例えば "123" のようなものは、最上位演算子で演算され、かつ包括体内の内容が保持されます。
- *
- * @param <T>
  */
 public interface TopBracket<T> extends Define {
 
@@ -26,7 +24,7 @@ public interface TopBracket<T> extends Define {
      * <br>
      * 包括記号の定義を取得する。
      *
-     * @return
+     * @return definition of the enclosing symbol
      */
     BracketPair getPair();
 
@@ -41,8 +39,8 @@ public interface TopBracket<T> extends Define {
      * <br>
      * 括弧内の値を対応するT型の値に変換します。
      *
-     * @param str
-     * @return
+     * @param str the value inside the parentheses
+     * @return value of type T
      */
     T convertString(String str);
 

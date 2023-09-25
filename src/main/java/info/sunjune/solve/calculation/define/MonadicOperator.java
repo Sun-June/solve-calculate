@@ -12,8 +12,6 @@ import info.sunjune.solve.calculation.error.CalculationException;
  * ------------------------------------------------------------------
  * <br>
  * モナド演算子
- *
- * @param <T>
  */
 public interface MonadicOperator<T> extends Define {
 
@@ -28,7 +26,7 @@ public interface MonadicOperator<T> extends Define {
      * <br>
      * モナド演算子名
      *
-     * @return
+     * @return monadic operator name
      */
     String symbol();
 
@@ -43,7 +41,7 @@ public interface MonadicOperator<T> extends Define {
      * <br>
      * 右側マッチングモードであるか、例えば -10、false を返す場合は左側マッチングモードである、例えば 20% = 0.2。（同一の演算子は 1 つしか存在できない、同じ演算体系内であることに注意してください）。
      *
-     * @return
+     * @return it's in right-match mode
      */
     boolean right();
 
@@ -58,10 +56,10 @@ public interface MonadicOperator<T> extends Define {
      * <br>
      * パラメーターを使用して計算する。
      *
-     * @param value
-     * @param context
-     * @return
-     * @throws CalculationException
+     * @param value   value
+     * @param context context
+     * @return result
+     * @throws CalculationException Exceptions occurring during calculations
      */
     T calculation(Object value, Context context) throws CalculationException;
 }

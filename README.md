@@ -16,14 +16,12 @@ require custom formulas.
 
 * Maven Dependency
 
-> Currently under development, cannot be directly referenced yet
-
 ```xml
 
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.2</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 
@@ -238,7 +236,7 @@ public class MixedCalculatorTest {
 
 ## Future Plans
 
-- 0.8.0
+- ~~0.8.0~~
     - Enhance code comments
     - Add support for common calculation functions
     - Publish to the Maven Central Repository

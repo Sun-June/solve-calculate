@@ -10,14 +10,12 @@ solve-calculate 是一个简单的公式解析及运算工具，主要面向于n
 
 * maven引用
 
-> 目前发布推进中，当前还无法直接引用使用
-
 ```xml
 
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.2</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 
@@ -229,7 +227,7 @@ public class MixedCalculatorTest {
 
 ## 未来计划
 
-* 0.8.0
+* ~~0.8.0~~
     * 丰富代码注释
     * 增加常用计算函数支持
     * 发布到maven中央仓库

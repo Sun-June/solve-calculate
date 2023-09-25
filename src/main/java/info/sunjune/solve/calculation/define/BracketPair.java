@@ -29,7 +29,7 @@ public class BracketPair implements Define {
     public static final BracketPair BRACES = new BracketPair('{', '}');
 
     /**
-     * The angle brackets pair: <>
+     * The angle brackets pair
      */
     public static final BracketPair ANGLES = new BracketPair('<', '>');
 

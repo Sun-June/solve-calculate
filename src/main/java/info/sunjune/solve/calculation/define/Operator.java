@@ -26,7 +26,7 @@ public interface Operator<T> extends Define {
      * <br>
      * 演算子名
      *
-     * @return
+     * @return operator name
      */
     String symbol();
 
@@ -56,11 +56,11 @@ public interface Operator<T> extends Define {
      * <br>
      * 左右のパラメーターを使用して計算を行います。
      *
-     * @param leftValue
-     * @param rightValue
-     * @param context
-     * @return 结果
-     * @throws CalculationException
+     * @param leftValue  leftValue
+     * @param rightValue rightValue
+     * @param context    context
+     * @return result
+     * @throws CalculationException Exceptions occurring during calculations
      */
     T calculation(Object leftValue, Object rightValue, Context<T> context) throws CalculationException;
 

@@ -14,6 +14,9 @@ public class ValueUtil {
      * ------------------------------------------------------------------
      * <br>
      * 適切な数値結果を取得し、整数の場合は長さに応じて int または long 型を返し、小数の場合は常に double 型を返します。
+     *
+     * @param decimal decimal
+     * @return ReasonableNumber
      */
     public static Number getReasonableNumber(BigDecimal decimal) {
         if (decimal.scale() > 0 && decimal.remainder(BigDecimal.ONE).doubleValue() != 0) {
@@ -38,9 +41,9 @@ public class ValueUtil {
      * <br>
      * 除算を行い、小数点以下15桁を保持します。
      *
-     * @param dividend
-     * @param divisor
-     * @return
+     * @param dividend dividend
+     * @param divisor  divisor
+     * @return result
      */
     public static BigDecimal divide(Number dividend, Number divisor) {
         return BigDecimal.valueOf(dividend.doubleValue()).divide(BigDecimal.valueOf(divisor.doubleValue()), 15, BigDecimal.ROUND_HALF_UP);

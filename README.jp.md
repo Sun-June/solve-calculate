@@ -11,14 +11,12 @@
 
 - Maven依存性
 
-> 現在開発中であり、直接参照と使用はまだ利用できません。
-
 ```xml
 
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.2</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 
@@ -226,7 +224,7 @@ public class MixedCalculatorTest {
 
 ## 未来の計画
 
-- 0.8.0
+- ~~0.8.0~~
     - コードコメントの強化
     - 一般的な計算関数のサポートを追加
     - Maven Central Repository への公開

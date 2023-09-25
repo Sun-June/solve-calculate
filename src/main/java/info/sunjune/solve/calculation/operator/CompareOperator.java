@@ -19,54 +19,54 @@ import info.sunjune.solve.calculation.error.StandardError;
 public class CompareOperator implements Operator<Boolean> {
 
     /**
-     * Greater Than Comparison Operator: >
+     * Greater Than Comparison Operator
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 大于比对运算符: >
+     * 大于比对运算符
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 大なり比較演算子：＞
+     * 大なり比較演算子
      */
     public static final CompareOperator GREATER_THAN = new CompareOperator(">");
 
     /**
-     * Greater than or equal to comparison operator: >=
+     * Greater than or equal to comparison operator
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 大于或等于比对运算符: >=
+     * 大于或等于比对运算符
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 大なりまたは等しい比較演算子：>=
+     * 大なりまたは等しい比較演算子
      */
     public static final CompareOperator GREATER_EQUAL_THAN = new CompareOperator(">=");
 
     /**
-     * Less Than Comparison Operator: <
+     * Less Than Comparison Operator
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 小于比对运算符: <
+     * 小于比对运算符
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 小なり比較演算子： <
+     * 小なり比較演算子
      */
     public static final CompareOperator LESS_THAN = new CompareOperator("<");
 
     /**
-     * Less than or equal to comparison operator: <=
+     * Less than or equal to comparison operator
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 小于或等于比对运算符: <=
+     * 小于或等于比对运算符
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 小なりイコール比較演算子：<=
+     * 小なりイコール比較演算子
      */
     public static final CompareOperator LESS_EQUAL_THAN = new CompareOperator("<=");
 
