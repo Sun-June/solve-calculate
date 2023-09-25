@@ -79,6 +79,7 @@ public class NumberCalculatorTest {
         this.formulaError("sum(100,,)", ",", ARGUMENT_MISSING);
 
         // FUNCTION
+        this.formulaError("max()", "max", FUNCTION_ARGUMENT_COUNT_ERROR);
         this.formulaError("π max(100)", "max", FUNCTION_MISSING);
         this.formulaError("max(1, 2)min(2, 3)", "min", FUNCTION_MISSING);
 

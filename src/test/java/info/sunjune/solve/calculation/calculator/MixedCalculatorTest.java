@@ -2,11 +2,17 @@ package info.sunjune.solve.calculation.calculator;
 
 import com.google.gson.Gson;
 import info.sunjune.solve.calculation.calculator.context.CalculationRecord;
+import info.sunjune.solve.calculation.calculator.item.Kind;
 import info.sunjune.solve.calculation.define.Context;
+import info.sunjune.solve.calculation.error.CalculationException;
+import info.sunjune.solve.calculation.error.StandardError;
 import info.sunjune.solve.calculation.util.BothValue;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MixedCalculatorTest {
 
@@ -33,6 +39,10 @@ public class MixedCalculatorTest {
         assertEquals(this.calculation(calculator, "if(4 * 2.5 <= 5 * 2 && 10 < 3, 10, \"abc\") + 2"), "abc2");
         assertEquals(calculator.calculation("if(1 * 10 <= 5 * 2 || 10 < 3, 10, \"abc\") + 2"), 12);
         assertEquals(calculator.calculation("if(1 * 10 <= 5 * 2 && 1 == 1, 10, \"abc\") + 2"), 12);
+
+        assertEquals(calculator.calculation("toNumber(\"12\" + \"12\") + 1"), 1213);
+        assertEquals(calculator.calculation("if(regularMatch(\"^\\d{2}$\", \"999\") && 1 == 1, 10, \"abc\") + 2"), "abc2");
+        assertEquals(calculator.calculation("if(regularMatch(\"^\\d{3}$\", \"999\") && 1 == 1, 10, \"abc\") + 2"), 12);
     }
 
     private Object calculation(MixedCalculator calculator, String formula) throws Exception {
@@ -43,6 +53,23 @@ public class MixedCalculatorTest {
             System.out.println("record:" + gson.toJson(record));
         }
         return bothValue.getLeft();
+    }
+
+    @Test
+    void calculationError() {
+        MixedCalculator calculator = new MixedCalculator();
+        String input = "100 - 50 / (2 - min(2, 2000)) + 1";
+        CalculationException ex = assertThrows(CalculationException.class, () -> calculator.calculation(input));
+        assertEquals(ex.getErrorInfo(), StandardError.DIVISION_BY_ZERO);
+        assertEquals(ex.context.pendingItem.source, "/");
+        System.out.println("the formula:" + input);
+        Gson gson = new Gson();
+        List<CalculationRecord> recordList = ex.context.recordList;
+        for (CalculationRecord record : recordList) {
+            if (record.kind != Kind.LITERAL) {
+                System.out.println("record:" + gson.toJson(record));
+            }
+        }
     }
 
 }

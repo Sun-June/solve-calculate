@@ -49,6 +49,19 @@ public abstract class Context<T> {
      */
     public final List<CalculationRecord> recordList = Lists.newArrayList();
 
+    /**
+     * Objects to be processed, used for easy identification of the object causing calculation errors.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 将要处理的计算对象，用以在出现计算异常时，方便定位出错的计算对象。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 計算対象オブジェクト、計算エラーの特定を容易にするためのオブジェクト
+     */
+    public SolveItem pendingItem;
+
     public T getLiteralValue(String literal) {
         if (topBracketValue.containsKey(literal)) {
             return topBracketValue.get(literal);

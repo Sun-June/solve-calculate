@@ -17,7 +17,7 @@ solve-calculate 是一个简单的公式解析及运算工具，主要面向于n
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
 </dependency>
 ```
 
@@ -49,7 +49,7 @@ public class NumberCalculatorTest {
 
 ### 特性
 
-#### 独立的公式检查
+#### 简单的计算公式合法性校验
 
 例子：
 
@@ -124,6 +124,41 @@ record::{"arithmetic":"+","index":21,"values":[9,18],"result":27,"kind":"OPERATO
     * values为参与计算的值（顺序即为运算传入的顺序）
     * result为此次运算的结果
     * kind为计算类型
+
+#### 精确的定位计算时产生的问题
+
+例子：
+
+```java
+public class NumberCalculatorTest {
+    @Test
+    void calculationError() {
+        MixedCalculator calculator = new MixedCalculator();
+        String input = "100 - 50 / (2 - min(2, 2000)) + 1";
+        CalculationException ex = assertThrows(CalculationException.class, () -> calculator.calculation(input));
+        assertEquals(ex.getErrorInfo(), StandardError.DIVISION_BY_ZERO);
+        assertEquals(ex.context.pendingItem.source, "/");
+        Gson gson = new Gson();
+        List<CalculationRecord> recordList = ex.context.recordList;
+        for (CalculationRecord record : recordList) {
+            if (record.kind != Kind.LITERAL) {
+                System.out.println("record:" + gson.toJson(record));
+            }
+        }
+    }
+}
+```
+
+输出结果：
+
+```shell
+record:{"arithmetic":"min","index":16,"values":[2.0,2000.0],"result":2.0,"kind":"FUNCTION"}
+record:{"arithmetic":"-","index":14,"values":[2.0,2.0],"result":0,"kind":"OPERATOR"}
+```
+
+* 其中可以通过异常中绑定的context，访问出现问题的项目pendingItem
+* 可以获取对应的错误信息以及对应的源字符串，以及对应的坐标
+* 执行记录中依然存在已成功计算的记录
 
 #### 简单的变量替换
 

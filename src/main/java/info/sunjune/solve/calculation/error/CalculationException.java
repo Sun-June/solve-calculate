@@ -1,5 +1,7 @@
 package info.sunjune.solve.calculation.error;
 
+import info.sunjune.solve.calculation.define.Context;
+
 /**
  * Exceptions occurring during calculations, such as when parameter types do not match or division by zero is attempted.
  * <br>
@@ -14,6 +16,8 @@ package info.sunjune.solve.calculation.error;
 public class CalculationException extends Exception {
 
     protected final ErrorInfo errorInfo;
+
+    public Context context;
 
     public CalculationException(ErrorInfo errorInfo) {
         this.errorInfo = errorInfo;

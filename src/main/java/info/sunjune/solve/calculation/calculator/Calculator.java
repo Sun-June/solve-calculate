@@ -158,7 +158,14 @@ public abstract class Calculator<T> {
         CalculatorContext<T> calculatorContext = this.checkFormula(formula);
         SolveItem item = calculatorContext.items.get(0);
 
-        T value = this.leftToRight(calculatorContext, item);
+        T value;
+        try {
+            value = this.leftToRight(calculatorContext, item);
+        } catch (CalculationException e) {
+            e.context = calculatorContext.context;
+            throw e;
+        }
+
         return new BothValue<>(value, calculatorContext.context);
     }
 
@@ -456,13 +463,23 @@ public abstract class Calculator<T> {
         SolveItem leftItem;
         SolveItem rightOperator;
         Context<T> context = calculatorContext.context;
+
         switch (item.kind) {
             case OPEN_BRACKET: // (
                 OpenBracketSolveItem open = (OpenBracketSolveItem) item;
                 CloseBracketSolveItem close = open.getClose();
                 T value = leftToRight(calculatorContext, right(calculatorContext, item));
                 SolveItem closeAfter = right(calculatorContext, close);
+                leftItem = left(calculatorContext, item);
+
                 if (closeAfter != null && closeAfter.kind == Kind.OPERATOR) {
+                    if (leftItem != null && leftItem.kind == Kind.OPERATOR) {
+                        Operator left = (Operator) leftItem.define;
+                        Operator right = (Operator) closeAfter.define;
+                        if (right.precedence() <= left.precedence()) {
+                            return value;
+                        }
+                    }
                     calculatorContext.leftValue = value;
                     return leftToRight(calculatorContext, closeAfter);
                 }
@@ -471,6 +488,7 @@ public abstract class Calculator<T> {
                 SolveItem next = right(calculatorContext, item);
                 leftItem = left(calculatorContext, item);
                 LiteralSolveItem<T> literalSolveItem = (LiteralSolveItem<T>) item;
+                context.pendingItem = item;
                 T literalValue = literalSolveItem.getValue();
                 context.addRecord(item, Lists.newArrayList(literalValue), literalValue);
                 if (next != null && calculatorContext.isMonadicOperatorLeft(next)) {
@@ -488,6 +506,7 @@ public abstract class Calculator<T> {
                 rightOperator = this.rightOperator(calculatorContext, item);
                 if (monadicOperator.right()) {
                     T rightValue = leftToRight(calculatorContext, right(calculatorContext, item));
+                    context.pendingItem = item;
                     T resultValue = monadicOperator.calculation(rightValue, context);
                     context.addRecord(item, Lists.newArrayList(rightValue), resultValue);
                     leftItem = left(calculatorContext, item);
@@ -498,6 +517,7 @@ public abstract class Calculator<T> {
                         return resultValue;
                     }
                 } else {
+                    context.pendingItem = item;
                     T resultValue = monadicOperator.calculation(calculatorContext.leftValue, context);
                     context.addRecord(item, Lists.newArrayList(calculatorContext.leftValue), resultValue);
                     SolveItem leftOperator = this.leftOperator(calculatorContext, item);
@@ -520,12 +540,14 @@ public abstract class Calculator<T> {
                         calculatorContext.leftValue = rightValue;
                         calculatorContext.stacks.computeIfAbsent(operator.precedence(), key ->
                                 obj -> {
+                                    context.pendingItem = item;
                                     T stackValue = operator.calculation(leftValue, obj, context);
                                     context.addRecord(item, Lists.newArrayList(leftValue, obj), stackValue);
                                     return stackValue;
                                 });
                         return this.leftToRight(calculatorContext, rightOperator);
                     } else {
+                        context.pendingItem = item;
                         T stepValue = operator.calculation(leftValue, rightValue, context);
                         context.addRecord(item, Lists.newArrayList(leftValue, rightValue), stepValue);
                         if (calculatorContext.stacks.containsKey(rightOp.precedence())) {
@@ -543,8 +565,13 @@ public abstract class Calculator<T> {
                         return this.leftToRight(calculatorContext, rightOperator);
                     }
                 } else {
+                    context.pendingItem = item;
                     T stepValue = operator.calculation(leftValue, rightValue, context);
                     context.addRecord(item, Lists.newArrayList(leftValue, rightValue), stepValue);
+                    SolveItem leftOperator = this.leftOperator(calculatorContext, item);
+                    if (leftOperator == null) {
+                        return stepValue;
+                    }
                     if (!calculatorContext.stacks.isEmpty()) {
                         stepValue = calculatorContext.stacks.values().stream().findFirst().get().apply(stepValue);
                         calculatorContext.stacks.clear();
@@ -562,6 +589,7 @@ public abstract class Calculator<T> {
                     values.add(this.leftToRight(calculatorContext, nextItem));
                     indexItem = functionSolveItem.getSeparator(i);
                 }
+                context.pendingItem = item;
                 T functionResult = function.calculation(values, context);
                 context.addRecord(item, values, functionResult);
                 SolveItem functionOpen = this.left(calculatorContext, item);

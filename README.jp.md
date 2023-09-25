@@ -18,7 +18,7 @@
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ public class NumberCalculatorTest {
 
 ### 特徴
 
-#### 独立した数式チェック
+#### 簡単な計算式の妥当性チェック
 
 例：
 
@@ -123,6 +123,41 @@ record::{"arithmetic":"+","index":21,"values":[9,18],"result":27,"kind":"OPERATO
     - valuesは計算に関与する値です（計算のために渡された順序で表示）。
     - resultはこの計算の結果です。
     - kindは計算タイプを表します。
+
+#### 計算時に発生する問題を正確に特定する
+
+例：
+
+```java
+public class NumberCalculatorTest {
+    @Test
+    void calculationError() {
+        MixedCalculator calculator = new MixedCalculator();
+        String input = "100 - 50 / (2 - min(2, 2000)) + 1";
+        CalculationException ex = assertThrows(CalculationException.class, () -> calculator.calculation(input));
+        assertEquals(ex.getErrorInfo(), StandardError.DIVISION_BY_ZERO);
+        assertEquals(ex.context.pendingItem.source, "/");
+        Gson gson = new Gson();
+        List<CalculationRecord> recordList = ex.context.recordList;
+        for (CalculationRecord record : recordList) {
+            if (record.kind != Kind.LITERAL) {
+                System.out.println("record:" + gson.toJson(record));
+            }
+        }
+    }
+}
+```
+
+出力結果：
+
+```shell
+record:{"arithmetic":"min","index":16,"values":[2.0,2000.0],"result":2.0,"kind":"FUNCTION"}
+record:{"arithmetic":"-","index":14,"values":[2.0,2.0],"result":0,"kind":"OPERATOR"}
+```
+
+- 例外でバウンドされた`context`を使用して、問題のある`pendingItem`にアクセスできます。
+- 対応するエラーメッセージ、ソース文字列、および座標を取得できます。
+- 実行レコードにはまだ正常に計算されたエントリが含まれています。
 
 #### シンプルな変数の置換
 

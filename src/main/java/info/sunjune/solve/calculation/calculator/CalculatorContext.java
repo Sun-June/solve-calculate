@@ -100,10 +100,12 @@ public class CalculatorContext<T> {
                         if (define.getPair().getClose().equals(item.source)) {
                             find = open;
                             FunctionSolveItem functionSolveItem = open.getFunction();
+                            if (find == previous) {
+                                functionSolveItem.setEmpty(true);
+                            }
                             Function<T> function = (Function<T>) functionSolveItem.define;
                             int argCount = functionSolveItem.getParamsCount();
                             if (function.minArgumentCount() > argCount || function.maxArgumentCount() < argCount) {
-                                System.out.println("errorCount::" + argCount + "the func::" + function);
                                 throw this.buildException(functionSolveItem, FUNCTION_ARGUMENT_COUNT_ERROR);
                             }
                             break;

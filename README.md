@@ -23,7 +23,7 @@ require custom formulas.
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
 </dependency>
 ```
 
@@ -56,7 +56,7 @@ public class NumberCalculatorTest {
 
 ### Features
 
-#### Independent Formula Validation
+#### Simple calculation formula validity check
 
 Example：
 
@@ -132,6 +132,41 @@ record::{"arithmetic":"+","index":21,"values":[9,18],"result":27,"kind":"OPERATO
     - `values` stores the values involved in the calculation (in the order they were passed for the operation).
     - `result` represents the result of this calculation.
     - `kind` represents the type of calculation.
+
+#### Accurate identification of issues arising during calculations
+
+Example：
+
+```java
+public class NumberCalculatorTest {
+    @Test
+    void calculationError() {
+        MixedCalculator calculator = new MixedCalculator();
+        String input = "100 - 50 / (2 - min(2, 2000)) + 1";
+        CalculationException ex = assertThrows(CalculationException.class, () -> calculator.calculation(input));
+        assertEquals(ex.getErrorInfo(), StandardError.DIVISION_BY_ZERO);
+        assertEquals(ex.context.pendingItem.source, "/");
+        Gson gson = new Gson();
+        List<CalculationRecord> recordList = ex.context.recordList;
+        for (CalculationRecord record : recordList) {
+            if (record.kind != Kind.LITERAL) {
+                System.out.println("record:" + gson.toJson(record));
+            }
+        }
+    }
+}
+```
+
+Output：
+
+```shell
+record:{"arithmetic":"min","index":16,"values":[2.0,2000.0],"result":2.0,"kind":"FUNCTION"}
+record:{"arithmetic":"-","index":14,"values":[2.0,2.0],"result":0,"kind":"OPERATOR"}
+```
+
+- You can access the problematic `pendingItem` in the exception's bound `context`.
+- You can obtain the corresponding error message, the source string, and the coordinates.
+- The execution records still contain successfully computed entries.
 
 #### Simple Variable Substitution
 

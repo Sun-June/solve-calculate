@@ -13,6 +13,8 @@ public class FunctionSolveItem extends SolveItem {
 
     private List<SolveItem> separators = Lists.newArrayList();
 
+    private boolean isEmpty = false;
+
     public FunctionSolveItem(String source, Define define) {
         super(source, Kind.FUNCTION, define);
     }
@@ -40,10 +42,13 @@ public class FunctionSolveItem extends SolveItem {
     }
 
     public int getParamsCount() {
+        if (this.isEmpty) {
+            return 0;
+        }
         if (!separators.isEmpty()) {
             return separators.size() + 1;
         }
-        return 0;
+        return 1;
     }
 
     public SolveItem getSeparator(int index) {
@@ -51,5 +56,9 @@ public class FunctionSolveItem extends SolveItem {
             return null;
         }
         return this.separators.get(index);
+    }
+
+    public void setEmpty(boolean empty) {
+        isEmpty = empty;
     }
 }

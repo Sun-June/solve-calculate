@@ -15,7 +15,8 @@ import java.util.List;
 public class MixedCalculator extends Calculator {
 
     protected static final List<Function> functions = Lists.newArrayList(NumberFunction.ROUND, NumberFunction.MAX,
-            NumberFunction.AVG, NumberFunction.MIN, NumberFunction.SUM, NumberFunction.LENGTH, NumberFunction.RANDOM, NormalFunction.IF);
+            NumberFunction.AVG, NumberFunction.MIN, NumberFunction.SUM, NumberFunction.LENGTH, NumberFunction.RANDOM,
+            NormalFunction.IF, NormalFunction.TO_NUMBER, NormalFunction.REGULAR_MATCH);
 
     protected static final List<Operator> operators = Lists.newArrayList(AdditionOperator.ADDITION, DivisionOperator.DIVISION,
             MultiplicationOperator.MULTIPLICATION, SubtractionOperator.SUBTRACTION, CompareOperator.GREATER_EQUAL_THAN,
