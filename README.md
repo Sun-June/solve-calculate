@@ -21,7 +21,7 @@ require custom formulas.
 ```xml
 
 <dependency>
-    <groupId>info.sunjune.solve</groupId>
+    <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
     <version>0.7.1</version>
 </dependency>
