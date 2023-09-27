@@ -48,7 +48,7 @@ public class NumberCalculator extends Calculator<Number> {
     }
 
     @Override
-    protected Context<Number> getInitContext(String formula) {
+    protected Context<Number> getDefaultContext(String formula) {
         return new NumberContext();
     }
 }

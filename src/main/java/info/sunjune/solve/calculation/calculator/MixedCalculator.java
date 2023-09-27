@@ -50,7 +50,7 @@ public class MixedCalculator extends Calculator {
     }
 
     @Override
-    protected Context getInitContext(String formula) {
+    protected Context getDefaultContext(String formula) {
         return new MixedContext();
     }
 }

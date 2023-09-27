@@ -1,7 +1,9 @@
 package info.sunjune.solve.calculation.calculator;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import info.sunjune.solve.calculation.calculator.context.CalculationRecord;
+import info.sunjune.solve.calculation.calculator.context.MixedContext;
 import info.sunjune.solve.calculation.calculator.item.Kind;
 import info.sunjune.solve.calculation.define.Context;
 import info.sunjune.solve.calculation.error.CalculationException;
@@ -10,6 +12,7 @@ import info.sunjune.solve.calculation.util.BothValue;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,6 +73,27 @@ public class MixedCalculatorTest {
                 System.out.println("record:" + gson.toJson(record));
             }
         }
+    }
+
+    @Test
+    void customer_context_should_be_work() throws Exception {
+        Map<String, Object> values = Maps.newHashMap();
+        values.put("number1", 100);
+        values.put("number2", 50);
+        values.put("str", "abc");
+
+        MixedCalculator calculator = new MixedCalculator();
+        Object result = calculator.calculation("number1 - number2 + 10 + str", new MixedContext() {
+            @Override
+            public Object getCustomerLiteralValue(String literal) {
+                Object value = super.getCustomerLiteralValue(literal);
+                if (value == null) {
+                    return values.get(literal);
+                }
+                return value;
+            }
+        });
+        assertEquals(result, "60abc");
     }
 
 }

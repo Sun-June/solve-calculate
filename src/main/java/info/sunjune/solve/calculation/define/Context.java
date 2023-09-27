@@ -64,11 +64,27 @@ public abstract class Context<T> {
         if (topBracketValue.containsKey(literal)) {
             return topBracketValue.get(literal);
         }
-        return null;
+        return this.getCustomerLiteralValue(literal);
     }
 
     public void addRecord(SolveItem item, List values, Object result) {
         this.recordList.add(new CalculationRecord(item, values, result));
     }
+
+    /**
+     * Customizing the retrieval of values corresponding to other variables, with a note that if null is returned, it may result in an error when checking the corresponding formula for the absence of the value.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 用以自定义获取其他变量对应的值，注意返回为null时对应的计算式检查会报找不到对应值的错。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 他の変数に対応する値をカスタマイズして取得し、nullが返された場合に対応する計算式のチェックで値が見つからないエラーが発生することに注意してください。
+     *
+     * @param literal
+     * @return
+     */
+    public abstract T getCustomerLiteralValue(String literal);
 
 }

@@ -139,6 +139,28 @@ public abstract class Calculator<T> {
     }
 
     /**
+     * Calculate and obtain the result using a formula.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 通过公式计算并获取结果
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 式を使って計算し、結果を取得します。
+     *
+     * @param formula formula
+     * @param context customer context
+     * @return the result
+     * @throws FormulaException     formula validation
+     * @throws CalculationException Exceptions occurring during calculations
+     */
+    public T calculation(String formula, Context<T> context) throws FormulaException, CalculationException {
+        BothValue<T, Context<T>> result = this.calculationBoth(formula, context);
+        return result.getLeft();
+    }
+
+    /**
      * Calculate the formula and retrieve the result and context, where the left side is the result, and the right side is the context (which can be used to retrieve execution records and more).
      * <br>
      * ------------------------------------------------------------------
@@ -155,7 +177,28 @@ public abstract class Calculator<T> {
      * @throws CalculationException Exceptions occurring during calculations
      */
     public BothValue<T, Context<T>> calculationBoth(String formula) throws FormulaException, CalculationException {
-        CalculatorContext<T> calculatorContext = this.checkFormula(formula);
+        return this.calculationBoth(formula, null);
+    }
+
+    /**
+     * Calculate the formula and retrieve the result and context, where the left side is the result, and the right side is the context (which can be used to retrieve execution records and more).
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 通过公式计算并获取结果及context，其中左边为结果，右边为context（可以通过context获取执行记录等操作）
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 式を計算して結果とコンテキストを取得し、左側が結果で右側がコンテキストです（コンテキストを使用して実行履歴などを取得できます）。
+     *
+     * @param formula formula
+     * @param context customer context
+     * @return the result
+     * @throws FormulaException     formula validation
+     * @throws CalculationException Exceptions occurring during calculations
+     */
+    public BothValue<T, Context<T>> calculationBoth(String formula, Context<T> context) throws FormulaException, CalculationException {
+        CalculatorContext<T> calculatorContext = this.checkFormula(formula, context);
         SolveItem item = calculatorContext.items.get(0);
 
         T value;
@@ -185,7 +228,30 @@ public abstract class Calculator<T> {
      * @throws FormulaException formula validation
      */
     public CalculatorContext<T> checkFormula(String formula) throws FormulaException {
-        CalculatorContext<T> calculatorContext = new CalculatorContext<T>(getInitContext(formula), this.expressionBracket());
+        return this.checkFormula(formula, null);
+    }
+
+    /**
+     * Validate the calculation formula (throw an exception if there is an error, return normally if there is no error), and return the corresponding object as the calculation context.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 校验计算公式（如果错误会抛出异常，无错误则正常返回），返回对应对象为计算用context
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 計算式を検証し、エラーがあれば例外をスローし、エラーがなければ正常に返し、対応するオブジェクトを計算用のコンテキストとして返します。
+     *
+     * @param formula formula
+     * @param context customer context
+     * @return the result
+     * @throws FormulaException formula validation
+     */
+    public CalculatorContext<T> checkFormula(String formula, Context<T> context) throws FormulaException {
+        if (context == null) {
+            context = this.getDefaultContext(formula);
+        }
+        CalculatorContext<T> calculatorContext = new CalculatorContext<T>(context, this.expressionBracket());
 
         formula = this.formatTop(formula, calculatorContext.context);
         this.initAndCheck(formula, calculatorContext);
@@ -340,20 +406,20 @@ public abstract class Calculator<T> {
     protected abstract List<MonadicOperator<T>> getMonadicOperators();
 
     /**
-     * Retrieve the initialized context.
+     * Retrieve the default context (i.e., this value is used when no context is provided during calculations).
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 获取初始化的context
+     * 获取默认的context（即计算时不传入context时采用此值）
      * <br>
      * ------------------------------------------------------------------
      * <br>
-     * 初期化されたコンテキストを取得する。
+     * デフォルトのコンテキストを取得します（つまり、コンテキストが指定されていない計算時にこの値が使用されます）。
      *
      * @param formula formula
      * @return Context
      */
-    protected abstract Context<T> getInitContext(String formula);
+    protected abstract Context<T> getDefaultContext(String formula);
 
     /**
      * High-priority enclosure, default is ().
