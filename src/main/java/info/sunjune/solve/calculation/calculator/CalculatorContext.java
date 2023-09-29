@@ -176,6 +176,11 @@ public class CalculatorContext<T> {
                         this.isMonadicOperatorLeft(previous))) {
                     throw this.buildException(item, LITERAL_MISSING);
                 }
+                LiteralSolveItem<T> literalSolveItem = (LiteralSolveItem<T>) item;
+                T value = literalSolveItem.getValue();
+                if (value == null) {
+                    throw buildException(literalSolveItem, VALUE_DOES_NOT_EXIST);
+                }
                 break;
         }
         index += item.source.length();

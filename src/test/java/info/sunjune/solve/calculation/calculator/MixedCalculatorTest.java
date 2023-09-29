@@ -46,6 +46,22 @@ public class MixedCalculatorTest {
         assertEquals(calculator.calculation("toNumber(\"12\" + \"12\") + 1"), 1213);
         assertEquals(calculator.calculation("if(regularMatch(\"^\\d{2}$\", \"999\") && 1 == 1, 10, \"abc\") + 2"), "abc2");
         assertEquals(calculator.calculation("if(regularMatch(\"^\\d{3}$\", \"999\") && 1 == 1, 10, \"abc\") + 2"), 12);
+
+        Map<String, Object> values = Maps.newHashMap();
+        values.put("number1", 11.1);
+        values.put("number2", 4);
+        values.put("number3", 6.0);
+        values.put("str", "66");
+        assertEquals(calculator.calculation("number3 / 2 + if(regularMatch(\"^d{2}$\", str) && number1 >= number2, 10, \"abc\" + str) + 2", new MixedContext() {
+            @Override
+            public Object getCustomerLiteralValue(String literal) {
+                Object value = super.getCustomerLiteralValue(literal);
+                if (value == null) {
+                    return values.get(literal);
+                }
+                return value;
+            }
+        }), "3abc662");
     }
 
     private Object calculation(MixedCalculator calculator, String formula) throws Exception {

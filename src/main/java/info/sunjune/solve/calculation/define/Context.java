@@ -82,8 +82,8 @@ public abstract class Context<T> {
      * <br>
      * 他の変数に対応する値をカスタマイズして取得し、nullが返された場合に対応する計算式のチェックで値が見つからないエラーが発生することに注意してください。
      *
-     * @param literal
-     * @return
+     * @param literal literal
+     * @return customer value
      */
     public abstract T getCustomerLiteralValue(String literal);
 

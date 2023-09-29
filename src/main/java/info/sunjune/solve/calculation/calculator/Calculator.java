@@ -64,7 +64,9 @@ public abstract class Calculator<T> {
 
     public Calculator() {
         BracketPair expressionBracket = this.expressionBracket();
-        Set<String> delimiters = Sets.newHashSet(expressionBracket.getOpen(), expressionBracket.getClose());
+        Set<String> delimiters = Sets.newLinkedHashSet();
+        delimiters.add(expressionBracket.getOpen());
+        delimiters.add(expressionBracket.getClose());
 
         for (Function<T> function : this.getFunctions()) {
             delimiters.add(function.name());
@@ -79,8 +81,10 @@ public abstract class Calculator<T> {
             delimiters.add(this.functionSeparator());
         }
 
+        List<Operator<T>> operators = this.getOperators();
+        operators.sort((o1, o2) -> o2.symbol().length() - o1.symbol().length()); // Longer characters must be parsed first.
         for (Operator<T> operator : this.getOperators()) {
-            if (this.operatorMap.containsKey(operator.symbol())) {
+            if (this.operatorMap.containsKey(operator.symbol()) || functionMap.containsKey(operator.symbol())) {
                 throw new DefineException("no duplicate operators can exist");
             }
             delimiters.add(operator.symbol());
@@ -324,9 +328,6 @@ public abstract class Calculator<T> {
             calculatorContext.addIndex(source);
         } else {
             T value = calculatorContext.context.getLiteralValue(literal);
-            if (value == null) {
-                throw calculatorContext.buildException(new LiteralSolveItem<T>(source, source, null), VALUE_DOES_NOT_EXIST);
-            }
             calculatorContext.addItem(new LiteralSolveItem<T>(source, literal, value));
         }
     }

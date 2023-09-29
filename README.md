@@ -21,7 +21,7 @@ require custom formulas.
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.8.1</version>
+    <version>0.8.2</version>
 </dependency>
 ```
 
