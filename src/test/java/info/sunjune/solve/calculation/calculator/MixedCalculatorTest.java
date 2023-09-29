@@ -52,7 +52,8 @@ public class MixedCalculatorTest {
         values.put("number2", 4);
         values.put("number3", 6.0);
         values.put("str", "66");
-        assertEquals(calculator.calculation("number3 / 2 + if(regularMatch(\"^d{2}$\", str) && number1 >= number2, 10, \"abc\" + str) + 2", new MixedContext() {
+
+        MixedContext context = new MixedContext() {
             @Override
             public Object getCustomerLiteralValue(String literal) {
                 Object value = super.getCustomerLiteralValue(literal);
@@ -61,7 +62,13 @@ public class MixedCalculatorTest {
                 }
                 return value;
             }
-        }), "3abc662");
+        };
+
+        String formula = "number3 / 2 + if(regularMatch(\"^\\d{2}$\", str) && number1 >= number2, 10, \"abc\" + str) + 2";
+
+        assertEquals(calculator.calculation(formula, context), 15);
+        values.put("str", "abc");
+        assertEquals(calculator.calculation(formula, context), "3abcabc2");
     }
 
     private Object calculation(MixedCalculator calculator, String formula) throws Exception {
