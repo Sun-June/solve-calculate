@@ -7,6 +7,9 @@
 solve-calculate is a simple formula parsing and calculation tool, mainly aimed at node code or business scenarios that
 require custom formulas.
 
+- Simple online demo： [solve-calculate-example](https://solve-example.azurewebsites.net/)
+- Minimum support for Java 1.8 and above versions.
+
 > The formula parsing and definition part of this project is inspired by the implementation
 > of [javaluator](https://javaluator.sourceforge.net/en/home/).
 
@@ -160,6 +163,7 @@ Output：
 ```shell
 record:{"arithmetic":"min","index":16,"values":[2.0,2000.0],"result":2.0,"kind":"FUNCTION"}
 record:{"arithmetic":"-","index":14,"values":[2.0,2.0],"result":0,"kind":"OPERATOR"}
+record:{"arithmetic":"/","index":9,"values":[50.0,0],"kind":"OPERATOR"}
 ```
 
 - You can access the problematic `pendingItem` in the exception's bound `context`.

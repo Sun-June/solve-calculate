@@ -1,6 +1,9 @@
 # solve-calculate
 
-- solve-calculateは、主にNode.jsコードやユーザー定義の数式が必要なビジネスシナリオ向けのシンプルな数式解析および計算ツールです。
+solve-calculateは、主にノードコードやユーザー定義の数式やその他のビジネスシナリオを必要とするためのシンプルな数式解決と計算ツールです。
+
+- 簡単なオンライン・デモ： [solve-calculate-example](https://solve-example.azurewebsites.net/)
+- Java 1.8およびそれ以降のバージョンを最低サポートします。
 
 > このプロジェクトの数式解析および定義の部分は、[javaluator](https://javaluator.sourceforge.net/en/home/)
 > の実装方法にインスパイアされています。
@@ -151,6 +154,7 @@ public class NumberCalculatorTest {
 ```shell
 record:{"arithmetic":"min","index":16,"values":[2.0,2000.0],"result":2.0,"kind":"FUNCTION"}
 record:{"arithmetic":"-","index":14,"values":[2.0,2.0],"result":0,"kind":"OPERATOR"}
+record:{"arithmetic":"/","index":9,"values":[50.0,0],"kind":"OPERATOR"}
 ```
 
 - 例外でバウンドされた`context`を使用して、問題のある`pendingItem`にアクセスできます。

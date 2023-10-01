@@ -2,6 +2,9 @@
 
 solve-calculate 是一个简单的公式解析及运算工具，主要面向于node code或需要用户自定义公式等业务场景。
 
+- 简单的在线demo: [solve-calculate-example](https://solve-example.azurewebsites.net/)
+- 最低支持java1.8及以上版本
+
 > 本项目的公式解析及定义部分借鉴[javaluator](https://javaluator.sourceforge.net/en/home/) 的实现方式
 
 > 你也可以看下关于[未来的计划](#未来计划)
@@ -152,6 +155,7 @@ public class NumberCalculatorTest {
 ```shell
 record:{"arithmetic":"min","index":16,"values":[2.0,2000.0],"result":2.0,"kind":"FUNCTION"}
 record:{"arithmetic":"-","index":14,"values":[2.0,2.0],"result":0,"kind":"OPERATOR"}
+record:{"arithmetic":"/","index":9,"values":[50.0,0],"kind":"OPERATOR"}
 ```
 
 * 其中可以通过异常中绑定的context，访问出现问题的项目pendingItem
