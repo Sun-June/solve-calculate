@@ -10,6 +10,7 @@ import info.sunjune.solve.calculation.error.DefineException;
 import info.sunjune.solve.calculation.error.FormulaError;
 import info.sunjune.solve.calculation.error.FormulaException;
 import info.sunjune.solve.calculation.util.BothValue;
+import info.sunjune.solve.calculation.util.ThrowFunction;
 
 import java.util.List;
 import java.util.Map;
@@ -473,7 +474,21 @@ public abstract class Calculator<T> {
         return DEFAULT_FUNCTION_SEPARATOR;
     }
 
-
+    /**
+     * Find the item to the left of the current item.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 寻找当前item的左侧的item。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 現在のアイテムの左側のアイテムを検索します。
+     *
+     * @param calculatorContext context
+     * @param item              Find the item
+     * @return current item
+     */
     protected SolveItem left(CalculatorContext<T> calculatorContext, SolveItem item) {
         int index = calculatorContext.items.indexOf(item);
         if (index > 0 && index < calculatorContext.items.size()) {
@@ -482,6 +497,21 @@ public abstract class Calculator<T> {
         return null;
     }
 
+    /**
+     * Find the item to the right of the current item.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 寻找当前item的右侧的item。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 現在のアイテムの右側のアイテムを検索します。
+     *
+     * @param calculatorContext context
+     * @param item              Find the item
+     * @return current item
+     */
     protected SolveItem right(CalculatorContext<T> calculatorContext, SolveItem item) {
         int index = calculatorContext.items.indexOf(item);
         if (index > -1 && index < calculatorContext.items.size() - 1) {
@@ -490,6 +520,21 @@ public abstract class Calculator<T> {
         return null;
     }
 
+    /**
+     * Find the operator item to the right of the current item.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 寻找当前item的右侧的运算符item。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 現在のアイテムの右隣の演算子アイテムを探します。
+     *
+     * @param calculatorContext context
+     * @param item              Find the item
+     * @return current item
+     */
     protected SolveItem rightOperator(CalculatorContext<T> calculatorContext, SolveItem item) {
         int index = calculatorContext.items.indexOf(item) + 1;
         while (index < calculatorContext.items.size()) {
@@ -508,6 +553,21 @@ public abstract class Calculator<T> {
         return null;
     }
 
+    /**
+     * Find the operator item to the left of the current item.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 寻找当前item的左侧的运算符item。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 現在のアイテムの左側にある演算子のアイテムを探します。
+     *
+     * @param calculatorContext context
+     * @param item              Find the item
+     * @return current item
+     */
     protected SolveItem leftOperator(CalculatorContext<T> calculatorContext, SolveItem item) {
         int index = calculatorContext.items.indexOf(item) - 1;
         while (index > -1) {
@@ -526,6 +586,22 @@ public abstract class Calculator<T> {
         return null;
     }
 
+    /**
+     * Calculate from left to right.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 从左到右进行计算。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 左から右へ計算を行います。
+     *
+     * @param calculatorContext context
+     * @param item              process item
+     * @return result
+     * @throws CalculationException Exceptions occurring during calculations
+     */
     protected T leftToRight(CalculatorContext<T> calculatorContext, SolveItem item) throws CalculationException {
         SolveItem leftItem;
         SolveItem rightOperator;
@@ -555,9 +631,8 @@ public abstract class Calculator<T> {
                 SolveItem next = right(calculatorContext, item);
                 leftItem = left(calculatorContext, item);
                 LiteralSolveItem<T> literalSolveItem = (LiteralSolveItem<T>) item;
-                context.pendingItem = item;
-                T literalValue = literalSolveItem.getValue();
-                context.addRecord(item, Lists.newArrayList(literalValue), literalValue);
+                T literalValue = this.processCalculation(context, item, Lists.newArrayList(literalSolveItem.getValue()),
+                        values -> (T) values.get(0));
                 if (next != null && calculatorContext.isMonadicOperatorLeft(next)) {
                     calculatorContext.leftValue = literalValue;
                     return leftToRight(calculatorContext, next);
@@ -573,9 +648,8 @@ public abstract class Calculator<T> {
                 rightOperator = this.rightOperator(calculatorContext, item);
                 if (monadicOperator.right()) {
                     T rightValue = leftToRight(calculatorContext, right(calculatorContext, item));
-                    context.pendingItem = item;
-                    T resultValue = monadicOperator.calculation(rightValue, context);
-                    context.addRecord(item, Lists.newArrayList(rightValue), resultValue);
+                    T resultValue = this.processCalculation(context, item, Lists.newArrayList(rightValue),
+                            values -> monadicOperator.calculation(values.get(0), context));
                     leftItem = left(calculatorContext, item);
                     if ((leftItem == null || leftItem.kind == Kind.FUNCTION_SEPARATOR || leftItem.kind == Kind.OPEN_BRACKET) && rightOperator != null) {
                         calculatorContext.leftValue = resultValue;
@@ -584,9 +658,8 @@ public abstract class Calculator<T> {
                         return resultValue;
                     }
                 } else {
-                    context.pendingItem = item;
-                    T resultValue = monadicOperator.calculation(calculatorContext.leftValue, context);
-                    context.addRecord(item, Lists.newArrayList(calculatorContext.leftValue), resultValue);
+                    T resultValue = this.processCalculation(context, item, Lists.newArrayList(calculatorContext.leftValue),
+                            values -> monadicOperator.calculation(values.get(0), context));
                     SolveItem leftOperator = this.leftOperator(calculatorContext, item);
                     if (rightOperator != null && leftOperator == null) {
                         calculatorContext.leftValue = resultValue;
@@ -606,17 +679,12 @@ public abstract class Calculator<T> {
                     if (rightOp.precedence() > operator.precedence()) {
                         calculatorContext.leftValue = rightValue;
                         calculatorContext.stacks.computeIfAbsent(operator.precedence(), key ->
-                                obj -> {
-                                    context.pendingItem = item;
-                                    T stackValue = operator.calculation(leftValue, obj, context);
-                                    context.addRecord(item, Lists.newArrayList(leftValue, obj), stackValue);
-                                    return stackValue;
-                                });
+                                obj -> this.processCalculation(context, item, Lists.newArrayList(leftValue, obj),
+                                        values -> operator.calculation(values.get(0), values.get(1), context)));
                         return this.leftToRight(calculatorContext, rightOperator);
                     } else {
-                        context.pendingItem = item;
-                        T stepValue = operator.calculation(leftValue, rightValue, context);
-                        context.addRecord(item, Lists.newArrayList(leftValue, rightValue), stepValue);
+                        T stepValue = this.processCalculation(context, item, Lists.newArrayList(leftValue, rightValue),
+                                values -> operator.calculation(values.get(0), values.get(1), context));
                         if (calculatorContext.stacks.containsKey(rightOp.precedence())) {
                             stepValue = calculatorContext.stacks.get(rightOp.precedence()).apply(stepValue);
                             calculatorContext.stacks.remove(rightOp.precedence());
@@ -632,9 +700,8 @@ public abstract class Calculator<T> {
                         return this.leftToRight(calculatorContext, rightOperator);
                     }
                 } else {
-                    context.pendingItem = item;
-                    T stepValue = operator.calculation(leftValue, rightValue, context);
-                    context.addRecord(item, Lists.newArrayList(leftValue, rightValue), stepValue);
+                    T stepValue = this.processCalculation(context, item, Lists.newArrayList(leftValue, rightValue),
+                            values -> operator.calculation(values.get(0), values.get(1), context));
                     SolveItem leftOperator = this.leftOperator(calculatorContext, item);
                     if (leftOperator == null) {
                         return stepValue;
@@ -656,9 +723,7 @@ public abstract class Calculator<T> {
                     values.add(this.leftToRight(calculatorContext, nextItem));
                     indexItem = functionSolveItem.getSeparator(i);
                 }
-                context.pendingItem = item;
-                T functionResult = function.calculation(values, context);
-                context.addRecord(item, values, functionResult);
+                T functionResult = this.processCalculation(context, item, values, list -> function.calculation(list, context));
                 SolveItem functionOpen = this.left(calculatorContext, item);
                 SolveItem leftOperation = this.leftOperator(calculatorContext, item);
                 SolveItem rightOperation = this.rightOperator(calculatorContext, functionOpen);
@@ -679,6 +744,35 @@ public abstract class Calculator<T> {
             default:
                 throw new CalculationException(UNKNOWN_OPERATOR);
         }
+    }
+
+    /**
+     * Process the calculation, record the objects to be processed, and make records.
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 处理计算过程，并记录将要处理的对象以及进行记录。
+     * <br>
+     * ------------------------------------------------------------------
+     * <br>
+     * 計算プロセスを処理し、処理対象のオブジェクトを記録し、記録を行います。
+     *
+     * @param context context
+     * @param item    process item
+     * @param values  process values
+     * @param process process function
+     * @return result
+     * @throws CalculationException Exceptions occurring during calculations
+     */
+    protected T processCalculation(Context<T> context, SolveItem item, List<Object> values, ThrowFunction<List<Object>, T> process) throws CalculationException {
+        context.pendingItem = item;
+        T functionResult = null;
+        try {
+            functionResult = process.apply(values);
+        } finally {
+            context.addRecord(item, values, functionResult);
+        }
+        return functionResult;
     }
 
 }

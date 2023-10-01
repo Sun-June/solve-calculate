@@ -91,11 +91,16 @@ public class MixedCalculatorTest {
         System.out.println("the formula:" + input);
         Gson gson = new Gson();
         List<CalculationRecord> recordList = ex.context.recordList;
+        CalculationRecord last = null;
         for (CalculationRecord record : recordList) {
             if (record.kind != Kind.LITERAL) {
                 System.out.println("record:" + gson.toJson(record));
             }
+            last = record;
         }
+        assertEquals(last.kind, Kind.OPERATOR);
+        assertEquals(last.arithmetic, "/");
+        assertEquals(last.values.get(1), 0);
     }
 
     @Test
