@@ -4,7 +4,7 @@
 
 #### [日本語](./README.jp.md)
 
-solve-calculate is a simple formula parsing and calculation tool, mainly aimed at node code or business scenarios that
+solve-calculate is a simple formula parsing and calculation tool, mainly aimed at no code or business scenarios that
 require custom formulas.
 
 - Simple online demo： [solve-calculate-example](https://solve-example.azurewebsites.net/)

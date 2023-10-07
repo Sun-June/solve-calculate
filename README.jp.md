@@ -1,6 +1,6 @@
 # solve-calculate
 
-solve-calculateは、主にノードコードやユーザー定義の数式やその他のビジネスシナリオを必要とするためのシンプルな数式解決と計算ツールです。
+solve-calculateは、主にNO CODEやユーザー定義の数式やその他のビジネスシナリオを必要とするためのシンプルな数式解決と計算ツールです。
 
 - 簡単なオンライン・デモ： [solve-calculate-example](https://solve-example.azurewebsites.net/)
 - Java 1.8およびそれ以降のバージョンを最低サポートします。
