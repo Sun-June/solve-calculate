@@ -14,4 +14,9 @@ public class MixedContext extends Context {
         }
         return null;
     }
+
+    @Override
+    public Object getExampleValue() {
+        return "exampleValue";
+    }
 }

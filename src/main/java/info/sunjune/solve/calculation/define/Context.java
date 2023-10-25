@@ -87,4 +87,5 @@ public abstract class Context<T> {
      */
     public abstract T getCustomerLiteralValue(String literal);
 
+    public abstract T getExampleValue();
 }

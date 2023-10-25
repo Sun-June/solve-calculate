@@ -70,9 +70,9 @@ public abstract class Calculator<T> {
         delimiters.add(expressionBracket.getClose());
 
         for (Function<T> function : this.getFunctions()) {
-            delimiters.add(function.name());
-            this.functionMap.put(function.name(), function);
-            delimiters.add(function.getPair().getOpen());
+            String functionKey = function.name() + function.getPair().getOpen();
+            delimiters.add(functionKey);
+            this.functionMap.put(functionKey, function);
             delimiters.add(function.getPair().getClose());
             this.openBrackets.add(function.getPair().getOpen());
             this.closeBrackets.add(function.getPair().getClose());
@@ -256,7 +256,7 @@ public abstract class Calculator<T> {
         if (context == null) {
             context = this.getDefaultContext(formula);
         }
-        CalculatorContext<T> calculatorContext = new CalculatorContext<T>(context, this.expressionBracket());
+        CalculatorContext<T> calculatorContext = new CalculatorContext<>(context, this.expressionBracket());
 
         formula = this.formatTop(formula, calculatorContext.context);
         this.initAndCheck(formula, calculatorContext);
@@ -304,6 +304,10 @@ public abstract class Calculator<T> {
                 throw new FormulaException(pos, pos + spec.length(), FormulaError.UNKNOWN);
             }
             calculatorContext.addItem(item);
+            if (item.kind == Kind.FUNCTION) {
+                Function<T> function = (Function<T>) item.define;
+                calculatorContext.addItem(new OpenBracketSolveItem(function.getPair().getOpen()));
+            }
 
             pos = matcher.end(); // Remember end of delimiter
         }
@@ -341,7 +345,8 @@ public abstract class Calculator<T> {
         } else if (this.closeBrackets.contains(spec)) {
             return new CloseBracketSolveItem(spec);
         } else if (this.functionMap.containsKey(spec)) {
-            return new FunctionSolveItem(spec, this.functionMap.get(spec));
+            Function<T> function = this.functionMap.get(spec);
+            return new FunctionSolveItem(function.name(), function);
         } else {
             Operator operator = this.operatorMap.get(spec);
             MonadicOperator monadicOperator = this.monadicOperatorMap.get(spec);

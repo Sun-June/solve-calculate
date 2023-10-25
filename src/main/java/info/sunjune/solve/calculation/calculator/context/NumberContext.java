@@ -10,6 +10,11 @@ public class NumberContext extends Context<Number> {
         return getNumberValue(literal);
     }
 
+    @Override
+    public Number getExampleValue() {
+        return 100;
+    }
+
     public static Number getNumberValue(String literal) {
         if ("π".equals(literal)) {
             return Math.PI;

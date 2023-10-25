@@ -1,13 +1,17 @@
 package info.sunjune.solve.calculation.calculator;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import info.sunjune.solve.calculation.calculator.context.CalculationRecord;
+import info.sunjune.solve.calculation.calculator.context.NumberContext;
 import info.sunjune.solve.calculation.calculator.item.Kind;
 import info.sunjune.solve.calculation.define.Context;
 import info.sunjune.solve.calculation.error.ErrorInfo;
 import info.sunjune.solve.calculation.error.FormulaException;
 import info.sunjune.solve.calculation.util.BothValue;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static info.sunjune.solve.calculation.error.FormulaError.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -101,6 +105,30 @@ public class NumberCalculatorTest {
         FormulaException ex = assertThrows(FormulaException.class, () -> calculator.checkFormula(formula));
         assertEquals(error, ex.error);
         assertEquals(errorStr, formula.substring(ex.startIndex, ex.endIndex));
+    }
+
+    @Test
+    void function_name_should_be_calculation() throws Exception {
+        NumberCalculator calculator = new NumberCalculator();
+        Map<String, Number> values = Maps.newHashMap();
+        values.put("summer", 11.1);
+        values.put("minutes", 4);
+        values.put("examinee", 6.0);
+
+        NumberContext context = new NumberContext() {
+            @Override
+            public Number getCustomerLiteralValue(String literal) {
+                Number value = super.getCustomerLiteralValue(literal);
+                if (value == null) {
+                    return values.get(literal);
+                }
+                return value;
+            }
+        };
+
+        assertEquals(calculator.calculation("1 + summer * minutes - examinee", context), 39.4);
+        assertEquals(calculator.calculation("1 + sum(summer, minutes, examinee, 1)", context), 23.1);
+        assertEquals(calculator.calculation("1 + sum(summer, min(minutes, examinee), 1) - 10", context), 7.1);
     }
 
 }

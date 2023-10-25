@@ -19,7 +19,7 @@ solve-calculateは、主にNO CODEやユーザー定義の数式やその他の�
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.4</version>
 </dependency>
 ```
 

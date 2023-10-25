@@ -18,7 +18,7 @@ solve-calculate 是一个简单的公式解析及运算工具，主要面向于n
 <dependency>
     <groupId>info.sun-june.solve</groupId>
     <artifactId>solve-calculate</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.4</version>
 </dependency>
 ```
 
